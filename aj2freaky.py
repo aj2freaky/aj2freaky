@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 
-app = Flask(aj2freaky.py)
+app = Flask(name)
 
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1360147748464103455/1n3Zhr8LHOeG7bnSnSLMWH6cwZzuQHV9MomC1DH-4w-j-z4f-ElP9c2k678oFoRyqKP-"
 
