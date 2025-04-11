@@ -23,3 +23,20 @@ def webhook():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+from flask import Flask, request, jsonify
+import requests
+
+app = Flask(__name__)
+
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1360147748464103455/1n3Zhr8LHOeG7bnSnSLMWH6cwZzuQHV9MomC1DH-4w-j-z4f-ElP9c2k678oFoRyqKP-"
+
+@app.route("/", methods=["POST"])
+def relay_to_discord():
+    data = request.json
+    message = data.get("message", "No message provided")
+    payload = {"content": message}
+    response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+    return jsonify({"status": "forwarded", "discord_status": response.status_code}), response.status_code
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
