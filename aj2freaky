@@ -1,23 +1,25 @@
-services:
-  - type: web
-    name: discord-relay-service
-    env: node
-    plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATABASE_URL
-        fromDatabase:
-          name: discord-relay-db
-          property: connectionString
-      - key: DISCORD_WEBHOOK_URL
-        sync: false
-databases:
-  - name: discord-relay-db
-    plan: free
-git add requirements.txt
-git commit -m "Add requirements.txt"
-git push origin main
+from flask import Flask, request
+import requests
 
+app = Flask(__name__)
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1360147748464103455/1n3Zhr8LHOeG7bnSnSLMWH6cwZzuQHV9MomC1DH-4w-j-z4f-ElP9c2k678oFoRyqKP-"
+
+@app.route("/")
+def index():
+    return "✅ A3 Discord Relay is online!"
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.json
+    content = data.get("content", "")
+    if not content:
+        return {"error": "Missing 'content'"}, 400
+
+    response = requests.post(DISCORD_WEBHOOK_URL, json={"content": content})
+    if response.status_code in [200, 204]:
+        return {"status": "Message sent to Discord"}, 200
+    else:
+        return {"error": f"Failed to send (status {response.status_code})"}, 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
