@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 
-app = Flask(name)
+app = Flask(__name__)  # Corrected from `name` to `__name__`
 
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1360147748464103455/1n3Zhr8LHOeG7bnSnSLMWH6cwZzuQHV9MomC1DH-4w-j-z4f-ElP9c2k678oFoRyqKP-"
 
@@ -20,4 +20,11 @@ def relay_to_discord():
     if response.status_code in [200, 204]:
         return jsonify({"status": "forwarded", "discord_status": response.status_code}), 200
     else:
-        return jsonify({"error": "Failed to
+        return jsonify({
+            "error": "Failed to forward message to Discord",
+            "discord_status": response.status_code,
+            "response": response.text
+        }), 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
