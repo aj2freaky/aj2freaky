@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: discord-relay-service
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: discord-relay-db
+          property: connectionString
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
+databases:
+  - name: discord-relay-db
+    plan: free
